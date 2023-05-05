@@ -1,2 +1,2 @@
-# MA thesis on corporate human-rights-disclosure
+# MA thesis on corporate human rights disclosure
  
