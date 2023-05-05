@@ -11,7 +11,6 @@
 
 # Packages ----------------------------------------------------------------
 library(renv)
-renv::init()
 library(here)
 library(rio)
 library(MASS)
@@ -105,8 +104,8 @@ d_hist <- d %>%
 
 p_hist <- ggplot() +
   geom_col(aes(x=disclosure_score, y=count),
-                         fill="lightgrey",
-                         color="black",
+                         fill="grey",
+                         color="grey",
                          data=d_hist) +
   geom_vline(aes(xintercept=mean_value),
                            linetype = "11",
@@ -285,15 +284,15 @@ ggsave("Outputs/plot_depvar_criteria.png", plot=p_crit, device="png", width=9, h
 ## Frequency and prop table ------------------------------------------------
 
 d_depvar_table <- d %>%
-  select(coding_category:hd_disaggregated) %>%
+  select(coding_category:hd_disaggregated, company_name) %>%
   group_by(coding_category) %>%
   reframe(across(
-    everything(),
+    c(everything(), -company_name),
     # display the sum of companies on the left and the percentage on the right
     ~paste0(
       sum(., na.rm=T),
       " / ",
-      round(mean(., na.rm=T)*100, digits = 1),
+      round(100*sum(., na.rm=T)/n_distinct(company_name), digits = 1),
       "%"
       )))
 
@@ -506,12 +505,13 @@ ggsave("Outputs/plot_scatter.png", plot=p_scatter, device="png", width=9, height
 ## Histogram independent variable ------------------------------------------
 
   p_hrp <- ggplot(data=d) +
-    geom_histogram(aes(x=HRP), binwidth = 1, fill="grey") +
+    geom_histogram(aes(x=HRP), binwidth = 1, fill="grey30") +
     geom_vline(aes(xintercept=mean(HRP)),linetype = "11",linewidth=1.2)+
     scale_x_continuous(breaks=seq(-70,0, by=5)) +
-    labs(title="Distribution of the independent variable",
-                       subtitle="The vertical line marks the overall average",
-                       x="human rights performance index") +
+    labs(title="Univariate distribution of the human rights performance index",
+         subtitle="The vertical line marks the overall average",
+         x="human rights performance index",
+         y="count of companies") +
     theme(
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
