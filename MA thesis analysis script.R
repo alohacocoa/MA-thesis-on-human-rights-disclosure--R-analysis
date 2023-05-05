@@ -1,5 +1,17 @@
+#
+#
+# MA thesis R script
+# 
+# David Klug
+#
+#
+#
+
+
 
 # Packages ----------------------------------------------------------------
+library(renv)
+renv::init()
 library(here)
 library(rio)
 library(MASS)
@@ -716,6 +728,8 @@ models_hd_documentlvl_pooled <- mice::pool(models_hd_documentlvl)
 
 ## Exporting regression model results -------------------------------------
 
+# for R >= 4.2.2 run this bugfix https://gist.github.com/alexeyknorre/b0780836f4cec04d41a863a683f91b53
+
 # create big regression table with soft and hard disclosure regression results
 stargazer(
   # specify models (these mostly serve as placeholders because the coefficents etc. need to be extracted manually for pooled regression)
@@ -908,6 +922,8 @@ model_hurdle_cntrylvl_count <- poissonreg::tidy(model_hurdle_cntrylvl, type="all
 
 
 ## Exporting hurdle model results ------------------------------------------
+
+# for R >= 4.2.2 run this bugfix https://gist.github.com/alexeyknorre/b0780836f4cec04d41a863a683f91b53
 
 stargazer(
   # specify models (these mostly serve as placeholders because the coefficents etc. need to be extracted manually for pooled regression)
