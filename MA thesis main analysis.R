@@ -416,6 +416,7 @@ d %>% select(company_name) %>% distinct() %>% stargazer(summary=F, type="html", 
 ## Scatterplot of DV and IV ------------------------------------------------
 
 d_scatter <- d %>% 
+  filter(HRP>=-40) %>% 
   select(sD, hD, HRP) %>% 
   pivot_longer(c(sD, hD), names_to = "disclosure_type", values_to = "disclosure_score")
 
@@ -431,12 +432,11 @@ p_scatter <- ggplot(data=d_scatter) +
         plot.margin = margin(.2,.2,.2,.2, "inches")) + # using inches because that's what ggsave() uses as well
   scale_x_continuous(breaks = c(seq(-60,0, by=10))) +
   labs(title="Scatterplot of dependent and independent variables",
-       subtitle="A small degree of noise is added to the position of the points to mitigate overplotting",
+       subtitle="A small degree of noise is added to the position of the points to reduce overplotting",
        y="disclosure score",
        x="human rights performance index")
 
 ggsave("Outputs/plot_scatter.png", plot=p_scatter, device="png", width=9, height=5)
-
   
 
 ## Disclosure levels by country --------------------------------------------
@@ -506,7 +506,7 @@ ggsave("Outputs/plot_scatter.png", plot=p_scatter, device="png", width=9, height
 
   p_hrp <- ggplot(data=d) +
     geom_histogram(aes(x=HRP), binwidth = 1, fill="grey30") +
-    geom_vline(aes(xintercept=mean(HRP)),linetype = "11",linewidth=1.2)+
+    geom_vline(aes(xintercept=mean(HRP)),linetype = "11",linewidth=1.2) +
     scale_x_continuous(breaks=seq(-70,0, by=5)) +
     labs(title="Univariate distribution of the human rights performance index",
          subtitle="The vertical line marks the overall average",
@@ -612,10 +612,10 @@ poisson_model_sd_minimal %>% performance::check_overdispersion()
 poisson_model_sd_maximal %>% performance::check_overdispersion()
 
 
-
 ## Assumption tests: VIF and collinearity ----------------------------------
 
-# tests for the neg binomial hD model and the poisson sD model showed no collinearity issues based on VIF
+# the test below for the neg binomial hD model and the poisson sD model
+# showed no collinearity issues based on VIF
 
 # create neg binominal hD model for testing
 negbin_model_hd_maximal <- glm.nb(hD ~ HRP + RL + ASSUR + HRR + lnA + ROA + mREG + sLAW, data = d)
@@ -636,6 +636,10 @@ poisson_model_sd_maximal %>% vif() %>% capture.output(file="Outputs/vif_sd.txt")
 
 ## Preparing the data ------------------------------------------------------
 
+# a separate set of regression results was created based on data that excludes
+# the somewhat extreme values of below -40
+# d <- filter(d, HRP > -40)
+
 # Formulas
 fhd_max <- as.formula("hD ~ HRP + RL + ASSUR + HRR + lnA + ROA + mREG + sLAW")
 fsd_max <- as.formula("sD ~ HRP + RL + ASSUR + HRR + lnA + ROA + mREG + sLAW")
@@ -643,6 +647,7 @@ fsd_max <- as.formula("sD ~ HRP + RL + ASSUR + HRR + lnA + ROA + mREG + sLAW")
 # generate imputed data due to missing reporting length
 m <- 30
 d_imp <- mice::mice(data = d, m = m, maxit = 10, seed = 1, print = F)
+save(d, file="regression_input_data.RData")
 
 ## Soft disclosure models --------------------------------------------------
 
@@ -934,7 +939,7 @@ stargazer(
   
   dep.var.caption = "Dependent variable: hard human rights disclosure score",
   dep.var.labels = "",
-  title = "Neg. binomial hurdle regression that models the relationship between human rights disclosure and performance<br>(1-6 are zero models, 7-12 are count models)",
+  title = "Neg. binomial hurdle regression that models the relationship between human rights disclosure and performance<br>1-6 are zero models, 7-12 are count models",
   type = "html",
   out = "Outputs/reg_table_hurdle.html",
   omit.stat = "theta",
