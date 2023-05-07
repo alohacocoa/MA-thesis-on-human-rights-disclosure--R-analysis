@@ -93,7 +93,7 @@ models_sd_documentlvl <- lapply(1:m, function(i) {
 # create maximal sD model with imputed datasets
 models_sd_max <- lapply(1:m, function(i) {
   glm(sD ~ HRP + RL + ASSUR + HRR + lnA + ROA + mREG + sLAW,
-         data = mice::complete(data = d_imp, i), family = "poisson")
+      data = mice::complete(data = d_imp, i), family = "poisson")
 })
 
 # create stepwise sD model with imputed datasets
@@ -121,7 +121,7 @@ model_hd_cntrylvl <- glm.nb(hD ~ HRP + mREG + sLAW, data = d)
 # create hD model with document-level control variables
 models_hd_documentlvl <- lapply(1:m, function(i) {
   glm.nb(hD ~ HRP + RL + ASSUR + HRR,
-      data = mice::complete(data = d_imp, i))
+         data = mice::complete(data = d_imp, i))
 })
 
 # create maximal hD model with imputed datasets
@@ -160,8 +160,8 @@ models_hd_documentlvl_pooled <- mice::pool(models_hd_documentlvl)
 # create big regression table with soft and hard disclosure regression results
 stargazer(
   # specify models (these mostly serve as placeholders because the coefficents etc. need to be extracted manually for pooled regression)
-  model_sd_min, models_sd_documentlvl[[1]], model_sd_firmlvl, model_sd_cntrylvl, models_sd_stepwise[[1]], models_sd_max[[1]], 
-  model_hd_min, models_hd_documentlvl[[1]], model_hd_firmlvl, model_hd_cntrylvl, models_hd_stepwise[[1]], models_hd_max[[1]],
+  model_sd_min, models_sd_documentlvl[[1]], model_sd_firmlvl, model_sd_cntrylvl, models_sd_max[[1]], models_sd_stepwise[[1]], 
+  model_hd_min, models_hd_documentlvl[[1]], model_hd_firmlvl, model_hd_cntrylvl, models_hd_max[[1]], models_hd_stepwise[[1]],
   
   dep.var.caption = "Dependent variable: human rights disclosure score",
   dep.var.labels = c("soft disclosure", "hard disclosure"),
@@ -169,7 +169,7 @@ stargazer(
   type = "html",
   out = "Outputs/reg_table_main_HRP-40.html",
   omit.stat = "theta",
-
+  
   coef = list(coef(model_sd_min),
               summary(models_sd_documentlvl_pooled)$estimate,
               coef(model_sd_firmlvl),
@@ -180,8 +180,8 @@ stargazer(
               summary(models_hd_documentlvl_pooled)$estimate,
               coef(model_hd_firmlvl),
               coef(model_hd_cntrylvl),
-              summary(models_hd_stepwise_pooled)$estimate,
-              summary(models_hd_max_pooled)$estimate),
+              summary(models_hd_max_pooled)$estimate,
+              summary(models_hd_stepwise_pooled)$estimate),
   
   se = list(summary(model_sd_min)$coefficients[, "Std. Error"],
             summary(models_sd_documentlvl_pooled)$std.error,
@@ -193,8 +193,8 @@ stargazer(
             summary(models_hd_documentlvl_pooled)$std.error,
             summary(model_hd_firmlvl)$coefficients[, "Std. Error"],
             summary(model_hd_cntrylvl)$coefficients[, "Std. Error"],
-            summary(models_hd_stepwise_pooled)$std.error,
-            summary(models_hd_max_pooled)$std.error),
+            summary(models_hd_max_pooled)$std.error,
+            summary(models_hd_stepwise_pooled)$std.error),
   
   t = list(coef(model_sd_min)/summary(model_sd_min)$coefficients[, "Std. Error"],
            summary(models_sd_documentlvl_pooled)$statistic,
@@ -206,8 +206,8 @@ stargazer(
            summary(models_hd_documentlvl_pooled)$statistic,
            coef(model_hd_firmlvl)/summary(model_hd_firmlvl)$coefficients[, "Std. Error"],
            coef(model_hd_cntrylvl)/summary(model_hd_cntrylvl)$coefficients[, "Std. Error"],
-           summary(models_hd_stepwise_pooled)$statistic,
-           summary(models_hd_max_pooled)$statistic),
+           summary(models_hd_max_pooled)$statistic,
+           summary(models_hd_stepwise_pooled)$statistic),
   
   p = list(coef(summary(model_sd_min))[,4],
            summary(models_sd_documentlvl_pooled)$p.value,
@@ -219,9 +219,9 @@ stargazer(
            summary(models_hd_documentlvl_pooled)$p.value,
            coef(summary(model_hd_firmlvl))[,4],
            coef(summary(model_hd_cntrylvl))[,4],
-           summary(models_hd_stepwise_pooled)$p.value,
-           summary(models_hd_max_pooled)$p.value)
-  )
+           summary(models_hd_max_pooled)$p.value,
+           summary(models_hd_stepwise_pooled)$p.value)
+)
 
 
 
@@ -347,6 +347,7 @@ model_hurdle_cntrylvl_zero <- poissonreg::tidy(model_hurdle_cntrylvl, type="all"
 model_hurdle_cntrylvl_count <- poissonreg::tidy(model_hurdle_cntrylvl, type="all") %>% filter(type=="count")
 
 
+
 ## Exporting hurdle model results ------------------------------------------
 
 # for R >= 4.2.2 run this bugfix https://gist.github.com/alexeyknorre/b0780836f4cec04d41a863a683f91b53
@@ -354,13 +355,13 @@ model_hurdle_cntrylvl_count <- poissonreg::tidy(model_hurdle_cntrylvl, type="all
 stargazer(
   # specify models (these mostly serve as placeholders because the coefficents etc. need to be extracted manually for pooled regression)
   model_hurdle_min, models_hurdle_documentlvl[[1]], model_hurdle_firmlvl,
-  model_hurdle_cntrylvl, models_hurdle_stepwise[[1]], models_hurdle_max[[1]],
+  model_hurdle_cntrylvl, models_hurdle_max[[1]], models_hurdle_stepwise[[1]], 
   model_hurdle_min, models_hurdle_documentlvl[[1]], model_hurdle_firmlvl,
-  model_hurdle_cntrylvl, models_hurdle_stepwise[[1]], models_hurdle_max[[1]],
+  model_hurdle_cntrylvl, models_hurdle_max[[1]], models_hurdle_stepwise[[1]],
   
   dep.var.caption = "Dependent variable: hard human rights disclosure score",
   dep.var.labels = "",
-  title = "Neg. binomial hurdle regression that models the relationship between human rights disclosure and performance<br>1-6 are zero models, 7-12 are count models, 4 influential cases removed",
+  title = "Neg. binomial hurdle regression that models the relationship between human rights disclosure and performance<br>1-6 are zero models, 7-12 are count models",
   type = "html",
   out = "Outputs/reg_table_hurdle_HRP-40.html",
   omit.stat = "theta",
@@ -375,8 +376,8 @@ stargazer(
               models_hurdle_documentlvl_tidy_smry_count$estimate,
               model_hurdle_firmlvl_count$estimate,
               model_hurdle_cntrylvl_count$estimate,
-              models_hurdle_stepwise_tidy_smry_count$estimate,
-              models_hurdle_max_tidy_smry_count$estimate),
+              models_hurdle_max_tidy_smry_count$estimate,
+              models_hurdle_stepwise_tidy_smry_count$estimate),
   
   se = list(model_hurdle_min_zero$std.error,
             models_hurdle_documentlvl_tidy_smry_zero$std.error,
@@ -388,8 +389,8 @@ stargazer(
             models_hurdle_documentlvl_tidy_smry_count$std.error,
             model_hurdle_firmlvl_count$std.error,
             model_hurdle_cntrylvl_count$std.error,
-            models_hurdle_stepwise_tidy_smry_count$std.error,
-            models_hurdle_max_tidy_smry_count$std.error),
+            models_hurdle_max_tidy_smry_count$std.error,
+            models_hurdle_stepwise_tidy_smry_count$std.error),
   
   t = list(model_hurdle_min_zero$statistic,
            models_hurdle_documentlvl_tidy_smry_zero$statistic,
@@ -401,8 +402,8 @@ stargazer(
            models_hurdle_documentlvl_tidy_smry_count$statistic,
            model_hurdle_firmlvl_count$statistic,
            model_hurdle_cntrylvl_count$statistic,
-           models_hurdle_stepwise_tidy_smry_count$statistic,
-           models_hurdle_max_tidy_smry_count$statistic),
+           models_hurdle_max_tidy_smry_count$statistic,
+           models_hurdle_stepwise_tidy_smry_count$statistic),
   
   p = list(model_hurdle_min_zero$p.value,
            models_hurdle_documentlvl_tidy_smry_zero$p.value,
@@ -414,6 +415,6 @@ stargazer(
            models_hurdle_documentlvl_tidy_smry_count$p.value,
            model_hurdle_firmlvl_count$p.value,
            model_hurdle_cntrylvl_count$p.value,
-           models_hurdle_stepwise_tidy_smry_count$p.value,
-           models_hurdle_max_tidy_smry_count$p.value)
+           models_hurdle_max_tidy_smry_count$p.value,
+           models_hurdle_stepwise_tidy_smry_count$p.value)
 )
