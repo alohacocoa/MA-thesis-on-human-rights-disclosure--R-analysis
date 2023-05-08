@@ -27,6 +27,8 @@ library(ggpattern)
 library(flextable)
 library(ggcorrplot)
 library(devtools)
+#devtools::install_github("cmartin/ggConvexHull")
+library(ggConvexHull)
 #devtools::install_github("caijun/ggcorrplot2")
 library(ggcorrplot2)
 library(ggforce) #implicit dependency of ggcorrplot2
@@ -417,26 +419,34 @@ d %>% select(company_name) %>% distinct() %>% stargazer(summary=F, type="html", 
 
 d_scatter <- d %>% 
   filter(HRP>=-40) %>% 
-  select(sD, hD, HRP) %>% 
-  pivot_longer(c(sD, hD), names_to = "disclosure_type", values_to = "disclosure_score")
+  select(sD, HRP, HRR) %>% 
+  mutate(HRR = ifelse(HRR==1, 
+                      "company has human rights report",
+                      "company does not have human rights report"))
 
 p_scatter <- ggplot(data=d_scatter) +
-  geom_point(aes(x=HRP, y=disclosure_score), size=3, alpha=.4, position = position_jitter(.05)) +
-  facet_grid(disclosure_type~., 
-             labeller = labeller(disclosure_type = c("hD"="hard disclosure", "sD"="soft disclosure"))) +
+  geom_jitter(aes(x=HRP, y=sD, color=factor(HRR), shape=factor(HRR)),
+             size=4, alpha=.6, width=0.2, height=0.2) +
+  geom_convexhull(aes(x=HRP, y=sD, fill=factor(HRR), color=factor(HRR)),
+                  alpha=.2, linewidth=.6) +
   theme(strip.background = element_blank(),
         strip.text = element_text(size=10, face="italic"),
-        panel.grid.major = element_line(color="grey"),
-        panel.grid.minor = element_line(color="grey"),
+        panel.background = element_rect(fill="grey95"),
+        panel.grid.major = element_line(color="grey85"),
+        panel.grid.minor = element_line(color="grey85"),
         axis.ticks = element_blank(),
-        plot.margin = margin(.2,.2,.2,.2, "inches")) + # using inches because that's what ggsave() uses as well
-  scale_x_continuous(breaks = c(seq(-60,0, by=10))) +
-  labs(title="Scatterplot of dependent and independent variables",
+        plot.margin = margin(.2,.2,.2,.2, "inches"),  # using inches because that's what ggsave() uses as well
+        legend.title = element_blank(),
+        legend.position = "top") +
+  scale_x_continuous(breaks = c(seq(-60,0, by=5)),
+                     limits = c(-40,0)) +
+  scale_y_continuous(breaks= scales::breaks_width(2)) + 
+  labs(title="Scatter plot of soft disclosure and human rights performance",
        subtitle="A small degree of noise is added to the position of the points to reduce overplotting",
        y="disclosure score",
        x="human rights performance index")
 
-ggsave("Outputs/plot_scatter.png", plot=p_scatter, device="png", width=9, height=5)
+ggsave("Outputs/plot_scatter.png", plot=p_scatter, device="png", width=9, height=4)
   
 
 ## Disclosure levels by country --------------------------------------------
@@ -498,6 +508,7 @@ ggsave("Outputs/plot_scatter.png", plot=p_scatter, device="png", width=9, height
       title="Number of companies and average human rights disclosure score by headquarters country",
       subtitle="The two lines show the average disclosure score. The one above represents soft disclosure, the one below hard disclosure.",
       y="average disclosure score")
+  
   ggsave("Outputs/plot_depvar_countries.png", plot=p_countries, device="png", width=9, height=5)
   
   
@@ -521,7 +532,7 @@ ggsave("Outputs/plot_scatter.png", plot=p_scatter, device="png", width=9, height
       panel.grid.major.y = element_line(color="grey40"),
       axis.ticks.y = element_line(color="grey40"))
   
-  ggsave("Outputs/plot_indep.png", plot=p_hrp, device="png", width=7, height=4)
+  ggsave("Outputs/plot_indep.png", plot=p_hrp, device="png", width=7, height=2.7)
   
 
   
@@ -576,6 +587,7 @@ scale_fill_gradientn(colours = c("red","orange","limegreen", "green"),
 scale_colour_gradientn(colours = "black", guide = "none") +
 labs(title="Correlation matrix for all variables",
                    subtitle = "Confidence levels: p=0.1 *, p=0.05 **, p=0.01 ***\nVariable names: hD=hard disclosure, sD=soft disclosure, HRP=human rights performance, \nRL=report length, ASSUR=assurance, HRR=human rights report, lnA=logged total assets, \nROA=return on assets, mREG=level of mandatory regulation, sLAW=level of soft regulation")
+
 ggsave("Outputs/plot_corr.png", plot=p_corr, device="png", width=7.5, height=6)
 
 
@@ -627,8 +639,6 @@ poisson_model_sd_maximal %>% performance::check_collinearity()
 # save VIFs to txt file
 negbin_model_hd_maximal %>% vif() %>% capture.output(file="Outputs/vif_hd.txt")
 poisson_model_sd_maximal %>% vif() %>% capture.output(file="Outputs/vif_sd.txt")
-
-
 
 
 
@@ -734,6 +744,7 @@ models_hd_documentlvl_pooled <- mice::pool(models_hd_documentlvl)
 ## Exporting regression model results -------------------------------------
 
 # for R >= 4.2.2 run this bugfix https://gist.github.com/alexeyknorre/b0780836f4cec04d41a863a683f91b53
+
 
 # create big regression table with soft and hard disclosure regression results
 stargazer(

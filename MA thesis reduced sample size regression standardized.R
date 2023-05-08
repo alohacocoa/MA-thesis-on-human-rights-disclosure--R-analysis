@@ -99,6 +99,71 @@ models_sd_max <- lapply(1:m, function(i) {
       data = mice::complete(data = d_imp, i), family = "poisson")
 })
 
+# ! ########### !
+# FINAL MODEL #
+# ! ########### !
+models_sd_final <- lapply(1:m, function(i) {
+  glm(sD ~ HRP + RL + ASSUR + lnA + ROA + mREG + sLAW,
+      data = mice::complete(data = d_imp, i), family = "poisson")
+})
+
+
+# new code added here
+library(broom)
+dfr <- mice::pool(models_sd_final) %>% broom::tidy() %>% as_tibble()
+interval1 <- -qnorm((1-0.90)/2)  # 90% multiplier
+interval2 <- -qnorm((1-0.95)/2)  # 95% multiplier
+interval3 <- -qnorm((1-0.99)/2)  # 99% multiplier
+
+p_reg <- ggplot(dfr %>%
+         filter(term!="(Intercept)") %>%
+         mutate(term = factor(term,
+                              levels=c("sLAW","mREG","ROA","lnA","ASSUR","RL","HRP")))) + 
+  geom_hline(yintercept = 0, color="gray20", lty=2, lwd=.7) +
+  geom_pointrange(aes(x=term,
+                      y=estimate,
+                      ymin=estimate - std.error*interval3,
+                      ymax=estimate + std.error*interval3),
+                  lwd=1.4,
+                  position=position_dodge2(width=1),
+                  shape=21,
+                  color="red2") +
+  geom_linerange(aes(x=term, 
+                     ymin=estimate - std.error*interval2,
+                     ymax=estimate + std.error*interval2),
+                 color="royalblue2",
+                 lwd=2, 
+                 position=position_dodge2(width=2/3)) +
+  geom_linerange(aes(x=term, 
+                     ymin=estimate - std.error*interval1,
+                     ymax=estimate + std.error*interval1),
+                 lwd=3, 
+                 color="black",
+                 position=position_dodge2(width=2/4)) +
+  geom_point(aes(x=term,y=estimate), 
+             color="black", 
+             size=2.5,shape=21,fill="white",stroke=1.5) +
+  coord_flip() + theme_bw() +
+  labs(title="Effect sizes and confidence intervals for soft disclosure Poisson model without HRR",
+      subtitle="Whiskers represent p<0.1, p<0.05, and p<0.01 confidence intervals\nBottom four companies by HRP were removed, effect sizes stardarized, intercept=1.56 (p<0.01)",
+      y="standardized estimate") +
+  scale_y_continuous(breaks = seq(-0.5, 0.3, by=0.1)) +
+  theme(
+    axis.title.y = element_blank(),
+    panel.grid.major = element_line(color="grey85"),
+    panel.grid.minor = element_blank(),
+    axis.text.y = element_text(size = 11),
+    plot.margin = margin(.2,.2,.2,.2, "inches"))
+
+ggsave("Outputs/plot_regression.png", plot=p_reg, device="png", width=9, height=4)
+# new code added here
+
+
+
+
+
+
+
 # create stepwise sD model with imputed datasets
 stepwise_regression_sd <- function(data) {
   step(glm(sD ~ HRP, data = data, family = "poisson"),

@@ -1,0 +1,32 @@
+
+% Table created by stargazer v.5.2.3 by Marek Hlavac, Social Policy Institute. E-mail: marek.hlavac at gmail.com
+% Date and time: Mon, May 08, 2023 - 1:32:40 PM
+\begin{table}[!htbp] \centering 
+  \caption{} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \multicolumn{2}{c}{Y} \\ 
+\\[-1.8ex] & (1) & (2)\\ 
+\hline \\[-1.8ex] 
+ X1 & $-$0.012$^{**}$ & $-$0.006 \\ 
+  & (0.005) & (0.005) \\ 
+  & & \\ 
+ X2 &  & 0.750$^{***}$ \\ 
+  &  & (0.132) \\ 
+  & & \\ 
+ Constant & 1.438$^{***}$ & 1.074$^{***}$ \\ 
+  & (0.094) & (0.122) \\ 
+  & & \\ 
+\hline \\[-1.8ex] 
+Observations & 56 & 56 \\ 
+Log Likelihood & $-$133.332 & $-$116.022 \\ 
+Akaike Inf. Crit. & 270.664 & 238.044 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
