@@ -144,16 +144,18 @@ p_reg <- ggplot(dfr %>%
              color="black", 
              size=2.5,shape=21,fill="white",stroke=1.5) +
   coord_flip() + theme_bw() +
-  labs(title="Effect sizes and confidence intervals for soft disclosure Poisson model without HRR",
-      subtitle="Whiskers represent p<0.1, p<0.05, and p<0.01 confidence intervals\nBottom four companies by HRP were removed, effect sizes stardarized, intercept=1.56 (p<0.01)",
-      y="standardized estimate") +
+  labs(
+    #title="Effect sizes and confidence intervals for soft disclosure Poisson model without HRR",
+      subtitle="Whiskers represent p<0.1, p<0.05, and p<0.01 confidence intervals\nBottom four companies by HRP were removed, effect sizes standardized, intercept=1.56 (p<0.01)",
+      y="effect size") +
   scale_y_continuous(breaks = seq(-0.5, 0.3, by=0.1)) +
   theme(
     axis.title.y = element_blank(),
     panel.grid.major = element_line(color="grey85"),
     panel.grid.minor = element_blank(),
     axis.text.y = element_text(size = 11),
-    plot.margin = margin(.2,.2,.2,.2, "inches"))
+    plot.margin = margin(.2,.2,.2,.2, "inches"),
+    text=element_text(family="Times New Roman"))
 
 ggsave("Outputs/plot_regression.png", plot=p_reg, device="png", width=9, height=4)
 # new code added here

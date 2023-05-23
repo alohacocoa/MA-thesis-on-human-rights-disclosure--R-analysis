@@ -130,7 +130,8 @@ p_hist <- ggplot() +
     breaks = scales::breaks_width(5),
     limits = c(0,40),
     expand = c(0.02,0)) +
-  labs(title = "Univariate distribution of hard and soft human rights disclosure scores",
+  labs(
+    #title = "Univariate distribution of hard and soft human rights disclosure scores",
                      subtitle = "The vertical line marks the overall average",
                      x = "disclosure score",
                      y = "count of companies") +
@@ -143,9 +144,10 @@ p_hist <- ggplot() +
     panel.background = element_blank(),
     strip.text = element_text(size = 10, face="italic"),
     strip.background = element_blank(),
-    plot.margin = margin(.2,.2,.2,.2, "inches"))
+    plot.margin = margin(.2,.2,.2,.2, "inches"),
+    text=element_text(family="Times New Roman"))
 
-ggsave("Outputs/plot_depvar_hist.png", plot=p_hist, device="png", width=9, height=5)
+ggsave("Outputs/plot_depvar_hist.png", plot=p_hist, device="png", width=9, height=4.2)
   
 
 ## Average scores by category ---------------------------------------------------------
@@ -198,15 +200,16 @@ p_cat <- ggplot(data=d_cat) +
     legend.title = element_blank(),
     axis.text.x = element_text(size=11),
     axis.title.x = element_blank(),
-    plot.margin = margin(.2,.2,.1,.2, "inches")) +
+    plot.margin = margin(.2,.2,.1,.2, "inches"),
+    text=element_text(family="Times New Roman")) +
   scale_pattern_discrete(
     breaks=c("mean_disclosure_hd","mean_disclosure_hd_binary", "mean_disclosure_sd"),
     labels=c("hard disclosure (total)", "hard disclosure (yes/no)","soft disclosure")) +
-  labs(title = "Average hard and soft disclosure scores by human rights category",
+  labs(#title = "Average hard and soft disclosure scores by human rights category",
        subtitle = "Maximum for 'soft disclosure' is 1\nMaximum for 'hard disclosure (total)' is 6\nMaximum for 'hard disclosure (yes/no)' is 1 (all scores above 0 are changed to 1)",
        y = "average disclosure score")
 
-ggsave("Outputs/plot_depvar_categories.png", plot=p_cat, device="png", width=9, height=5)
+ggsave("Outputs/plot_depvar_categories.png", plot=p_cat, device="png", width=9, height=4.5)
 
 
 
@@ -268,17 +271,18 @@ p_crit <-  ggplot(data=d_criteria) +
     axis.ticks.y = element_line(color="grey40"),
     panel.grid.major.x = element_blank(),
     panel.grid.minor = element_blank(),
-    legend.position = c(.9, 1.08),
+    legend.position = c(.9, 1.1),
     legend.title = element_blank(),
     axis.text.x = element_text(size = 11),
     axis.title.x = element_blank(),
-    plot.margin = margin(.2,.2,.2,.2, "inches")) +
+    plot.margin = margin(.2,.2,.2,.2, "inches"),
+    text=element_text(family="Times New Roman")) +
   labs(
-    title = "Average hard disclosure scores by disclosure criterium",
+    #title = "Average hard disclosure scores by disclosure criterium",
     subtitle = "Maximum for 'average (total)' is 11\nMaximum for 'average (yes/no)' is 1 (all scores above 0 are changed to 1)",
     y = "average hard disclosure score")
 
-ggsave("Outputs/plot_depvar_criteria.png", plot=p_crit, device="png", width=9, height=4.5)  
+ggsave("Outputs/plot_depvar_criteria.png", plot=p_crit, device="png", width=9, height=3.7)  
 
 
 
@@ -437,16 +441,17 @@ p_scatter <- ggplot(data=d_scatter) +
         axis.ticks = element_blank(),
         plot.margin = margin(.2,.2,.2,.2, "inches"),  # using inches because that's what ggsave() uses as well
         legend.title = element_blank(),
-        legend.position = "top") +
+        legend.position = "top",
+        text=element_text(family="Times New Roman")) +
   scale_x_continuous(breaks = c(seq(-60,0, by=5)),
                      limits = c(-40,0)) +
   scale_y_continuous(breaks= scales::breaks_width(2)) + 
-  labs(title="Scatter plot of soft disclosure and human rights performance",
+  labs(#title="Scatter plot of soft disclosure and human rights performance",
        subtitle="A small degree of noise is added to the position of the points to reduce overplotting",
        y="disclosure score",
        x="human rights performance index")
 
-ggsave("Outputs/plot_scatter.png", plot=p_scatter, device="png", width=9, height=4)
+ggsave("Outputs/plot_scatter.png", plot=p_scatter, device="png", width=9, height=3.8)
   
 
 ## Disclosure levels by country --------------------------------------------
@@ -500,16 +505,17 @@ ggsave("Outputs/plot_scatter.png", plot=p_scatter, device="png", width=9, height
       panel.grid.major.x = element_blank(),
       panel.grid.major.y = element_line(color="grey40"),
       axis.ticks.y = element_line(color="grey40"),
-      axis.text.x = element_text(size=11, margin = margin(t=-5)),
+      axis.text.x = element_text(size=11, margin = margin(t=-3)),
       axis.title.x = element_blank(),
       axis.ticks.x = element_blank(),
-      plot.margin = margin(.2,.2,.1,.2, "inches")) + # using inches because that's what ggsave() uses as well
+      plot.margin = margin(.2,.2,.1,.2, "inches"),
+      text=element_text(family="Times New Roman")) + # using inches because that's what ggsave() uses as well
     labs(
-      title="Number of companies and average human rights disclosure score by headquarters country",
+      #title="Number of companies and average human rights disclosure score by headquarters country",
       subtitle="The two lines show the average disclosure score. The one above represents soft disclosure, the one below hard disclosure.",
       y="average disclosure score")
   
-  ggsave("Outputs/plot_depvar_countries.png", plot=p_countries, device="png", width=9, height=5)
+  ggsave("Outputs/plot_depvar_countries.png", plot=p_countries, device="png", width=9, height=4.2)
   
   
 
@@ -530,7 +536,8 @@ ggsave("Outputs/plot_scatter.png", plot=p_scatter, device="png", width=9, height
       panel.background = element_blank(),
       plot.margin = margin(.1,.1,.1,.1, "inches"),
       panel.grid.major.y = element_line(color="grey40"),
-      axis.ticks.y = element_line(color="grey40"))
+      axis.ticks.y = element_line(color="grey40"),
+      text=element_text(family="Times New Roman"))
   
   ggsave("Outputs/plot_indep.png", plot=p_hrp, device="png", width=7, height=2.7)
   
@@ -573,7 +580,8 @@ p.mat = corr_pmat,
 insig = "label_sig",
 sig.lvl = c(0.1, 0.05, 0.01)) +
 theme(panel.background = element_rect(hsv(0,0,0.97)),
-      plot.margin = margin(.15,0,.15,0, "inches")) +
+      plot.margin = margin(.15,0,.15,0, "inches"),
+      text=element_text(family="Times New Roman")) +
 scale_fill_gradientn(colours = c("red","orange","limegreen", "green"),
                                    limits = c(-1, 1),
                                    guide = guide_colorbar(
@@ -585,7 +593,7 @@ scale_fill_gradientn(colours = c("red","orange","limegreen", "green"),
                                      barwidth = 1.5,
                                      barheight = 15)) +
 scale_colour_gradientn(colours = "black", guide = "none") +
-labs(title="Correlation matrix for all variables",
+labs(#title="Correlation matrix for all variables",
                    subtitle = "Confidence levels: p=0.1 *, p=0.05 **, p=0.01 ***\nVariable names: hD=hard disclosure, sD=soft disclosure, HRP=human rights performance, \nRL=report length, ASSUR=assurance, HRR=human rights report, lnA=logged total assets, \nROA=return on assets, mREG=level of mandatory regulation, sLAW=level of soft regulation")
 
 ggsave("Outputs/plot_corr.png", plot=p_corr, device="png", width=7.5, height=6)
